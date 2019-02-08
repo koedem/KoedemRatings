@@ -38,7 +38,7 @@ public class Player {
 
 	public void print(RatingPoint ratingPoint) {
 		System.out.println("PlayerID: " + identifier + " , Name: " + lastName + ", "
-		                   + firstName + " Rating: " + ratingPoint.getRating() + " ( RD: "
-		                   + ratingPoint.getRatingDeviation() + " )");
+		                   + firstName + " Rating: " + String.format("%.2f",ratingPoint.getRating()) + " ( RD: "
+		                   + String.format("%.2f",ratingPoint.getRatingDeviation()) + " )");
 	}
 }

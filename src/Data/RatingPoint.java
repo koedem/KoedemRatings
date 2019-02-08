@@ -100,5 +100,7 @@ public class RatingPoint {
 
 	// TODO implement
 	public void print() {
+		System.out.println("ID: " + playerID + ", Rating: " + String.format("%.2f",rating) + " ( " + String.format("%+.2f",ratingChange)
+		                   + " ), RD: " + String.format("%.2f",ratingDeviation) + " ( " + String.format("%+.2f",ratingDeviationChange) + " ).");
 	}
 }

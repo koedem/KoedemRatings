@@ -16,74 +16,78 @@ public class Calculator {
 	public static void calculate(RatingPoint oldPoint, RatingPoint newPoint) {
 		double phi = oldPoint.glickoTwoRatingDeviation;
 		double sigma = oldPoint.getVolatility();
-		
-		double v = 0.0;
-		double delta = 0.0;
-		for (int i = 0; i < oldPoint.games.size(); i++) {
-			Game    game   = oldPoint.games.get(i);
-			boolean winner = oldPoint.equals(game.winnerOne) || oldPoint.equals(game.winnerTwo);
-			double  my     = 0.0;
-			double  myI    = 0.0;
-			if (winner) { // the team rating gets calculated as the sum of the players ratings
-				my = game.winnerOne.glickoTwoRating + game.winnerTwo.glickoTwoRating;
-				myI = game.loserOne.glickoTwoRating + game.loserTwo.glickoTwoRating;
-			} else {
-				my = game.loserOne.glickoTwoRating + game.loserTwo.glickoTwoRating;
-				myI = game.winnerOne.glickoTwoRating + game.winnerTwo.glickoTwoRating;
+		if (oldPoint.games.size() != 0) {
+			double v     = 0.0;
+			double delta = 0.0;
+			for (int i = 0; i < oldPoint.games.size(); i++) {
+				Game    game   = oldPoint.games.get(i);
+				boolean winner = oldPoint.equals(game.winnerOne) || oldPoint.equals(game.winnerTwo);
+				double  my     = 0.0;
+				double  myI    = 0.0;
+				if (winner) { // the team rating gets calculated as the sum of the players ratings
+					my = game.winnerOne.glickoTwoRating + game.winnerTwo.glickoTwoRating;
+					myI = game.loserOne.glickoTwoRating + game.loserTwo.glickoTwoRating;
+				} else {
+					my = game.loserOne.glickoTwoRating + game.loserTwo.glickoTwoRating;
+					myI = game.winnerOne.glickoTwoRating + game.winnerTwo.glickoTwoRating;
+				}
+				// The "opponent RD" is the 2-norm of all other players RDs. (including the players partner)
+				double phiI = Math.sqrt(Math.pow(game.winnerOne.glickoTwoRatingDeviation, 2) + Math.pow(game.winnerTwo.glickoTwoRatingDeviation, 2) +
+				                        Math.pow(game.loserOne.glickoTwoRatingDeviation, 2) + Math.pow(game.loserTwo.glickoTwoRatingDeviation, 2) -
+				                        Math.pow(oldPoint.glickoTwoRatingDeviation, 2));
+				double G = g(phiI);
+				double e = E(my, myI, phiI);
+				v += G * G * e * (1.0 - e);
+
+				if (winner) {
+					delta += G * (1 - e);
+				} else {
+					delta += G * (0 - e);
+				}
 			}
-			// The "opponent RD" is the 2-norm of all other players RDs. (including the players partner)
-			double phiI = Math.sqrt(Math.pow(game.winnerOne.glickoTwoRatingDeviation, 2) 
-		+ Math.pow(game.winnerTwo.glickoTwoRatingDeviation, 2) + Math.pow(game.loserOne.glickoTwoRatingDeviation, 2) 
-		+ Math.pow(game.loserTwo.glickoTwoRatingDeviation, 2) - Math.pow(oldPoint.glickoTwoRatingDeviation, 2));
-			double G = g(phiI);
-			double e = E(my, myI, phiI);
-			v += G * G * e * (1.0 - e);
-			
-			if (winner) {
-				delta += G * (1 - e);
-			} else {
-				delta += G * (0 - e);
+			v = 1.0 / v;
+
+			delta = v * delta;
+
+			double vol = volatility(sigma, delta, phi, v);
+
+			double phiStar = Math.sqrt(phi * phi + vol * vol);
+
+			double phiPrime = 1 / Math.sqrt(1 / (phiStar * phiStar) + 1 / v);
+			double myPrime  = 0;
+			for (int i = 0; i < oldPoint.games.size(); i++) {
+				Game    game   = oldPoint.games.get(i);
+				boolean winner = oldPoint.equals(game.winnerOne) || oldPoint.equals(game.winnerTwo);
+				double  my     = 0.0;
+				double  myI    = 0.0;
+
+				if (winner) {
+					my = game.winnerOne.glickoTwoRating + game.winnerTwo.glickoTwoRating;
+					myI = game.loserOne.glickoTwoRating + game.loserTwo.glickoTwoRating;
+				} else {
+					my = game.loserOne.glickoTwoRating + game.loserTwo.glickoTwoRating;
+					myI = game.winnerOne.glickoTwoRating + game.winnerTwo.glickoTwoRating;
+				}
+				double phiI = Math.sqrt(Math.pow(game.winnerOne.glickoTwoRatingDeviation, 2) + Math.pow(game.winnerTwo.glickoTwoRatingDeviation, 2) +
+				                        Math.pow(game.loserOne.glickoTwoRatingDeviation, 2) + Math.pow(game.loserTwo.glickoTwoRatingDeviation, 2) -
+				                        Math.pow(oldPoint.glickoTwoRatingDeviation, 2));
+
+				if (winner) {
+					myPrime += g(phiI) * (1 - E(my, myI, phiI));
+				} else {
+					myPrime += g(phiI) * (0 - E(my, myI, phiI));
+				}
 			}
+			double ratingChange = myPrime * phiPrime * phiPrime;
+			myPrime = oldPoint.glickoTwoRating + ratingChange; // TODO recheck this
+			newPoint.setRatingChange(CONVERSION_FACTOR_2_1 * ratingChange);
+			newPoint.setRating(CONVERSION_FACTOR_2_1 * myPrime + 1500);
+			newPoint.setRatingDeviation(CONVERSION_FACTOR_2_1 * phiPrime);
+			newPoint.setVolatility(vol);
+		} else {
+			newPoint.setRatingDeviation(CONVERSION_FACTOR_2_1 * Math.sqrt(phi * phi + sigma * sigma));
 		}
-		v = 1.0 / v;
-		
-		delta = v * delta;
-		
-		double vol = volatility(sigma, delta, phi, v);
-		
-		double phiStar = Math.sqrt(phi * phi + vol * vol);
-		
-		double phiPrime = 1 / Math.sqrt(1 / (phiStar * phiStar) + 1 / v);
-		double myPrime = 0;
-		for (int i = 0; i < oldPoint.games.size(); i++) {
-			Game    game   = oldPoint.games.get(i);
-			boolean winner = oldPoint.equals(game.winnerOne) || oldPoint.equals(game.winnerTwo);
-			double  my     = 0.0;
-			double  myI    = 0.0;
-			
-			if (winner) {
-				my = game.winnerOne.glickoTwoRating + game.winnerTwo.glickoTwoRating;
-				myI = game.loserOne.glickoTwoRating + game.loserTwo.glickoTwoRating;
-			} else {
-				my = game.loserOne.glickoTwoRating + game.loserTwo.glickoTwoRating;
-				myI = game.winnerOne.glickoTwoRating + game.winnerTwo.glickoTwoRating;
-			}
-			double phiI = Math.sqrt(Math.pow(game.winnerOne.glickoTwoRatingDeviation, 2)
-	       + Math.pow(game.winnerTwo.glickoTwoRatingDeviation, 2) + Math.pow(game.loserOne.glickoTwoRatingDeviation, 2)
-		   + Math.pow(game.loserTwo.glickoTwoRatingDeviation, 2) - Math.pow(oldPoint.glickoTwoRatingDeviation, 2));
-			
-			if (winner) {
-				myPrime += g(phiI) * (1 - E(my, myI, phiI));
-			} else {
-				myPrime += g(phiI) * (0 - E(my, myI, phiI));
-			}
-		}
-		double ratingChange = myPrime * phiPrime * phiPrime;
-		myPrime = oldPoint.glickoTwoRating + ratingChange; // TODO recheck this
-		newPoint.setRatingChange(ratingChange);
-		newPoint.setRating(CONVERSION_FACTOR_2_1 * myPrime + 1500);
-		newPoint.setRatingDeviation(CONVERSION_FACTOR_2_1 * phiPrime);
-		newPoint.setVolatility(vol);
+		newPoint.setRatingDeviationChange(newPoint.getRatingDeviation() - oldPoint.getRatingDeviation());
 	}
 	
 	private static double volatility(double sigma, double delta, double phi, double v) {

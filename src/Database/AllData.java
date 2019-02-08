@@ -52,6 +52,9 @@ public class AllData {
 				this.ratingPoints.get(ratingPoints.getInt("ratingPeriod")).add(new RatingPoint(ratingPoints.getInt("playerID"), ratingPoints.getInt("ratingPeriod"),
 				        ratingPoints.getDouble("rating"), ratingPoints.getDouble("ratingDeviation"), ratingPoints.getDouble("volatility")));
 			}
+			if (this.ratingPoints.size() == 0) { // otherwise inserting a rating point later could lead to out of bounds exception
+				this.ratingPoints.add(new ArrayList<>());
+			}
 			System.out.println("Sucessfully loaded rating points.");
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());

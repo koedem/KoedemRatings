@@ -101,7 +101,7 @@ public class Main {
 		data.ratingPoints.add(new ArrayList<RatingPoint>()); // i.e. create new rating period
 		for (RatingPoint rating : data.ratingPoints.get(currentRatingPeriod)) {
 			RatingPoint newRating = rating.copyForNextRatingPeriod();
-			newRating.glickoIze();
+			rating.glickoIze();
 			data.ratingPoints.get(currentRatingPeriod + 1).add(newRating); // put the copy in the next rating period
 		}
 		++currentRatingPeriod; // the old data stays as is, all calculations happen for the new period

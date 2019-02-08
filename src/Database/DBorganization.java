@@ -1,5 +1,6 @@
 package Database;
 
+import java.io.File;
 import java.sql.*;
 
 /**
@@ -134,9 +135,14 @@ public class DBorganization {
 
 	public void setup(String path, String dbName) {
 		url = "jdbc:sqlite:".concat(path);
+		if (!(url.endsWith(File.separator))) {
+			url = url.concat(File.separator);
+		}
 		createNewDatabase(dbName);
 		setupTables(dbName);
-		closeConnection(); // close old connection first
+		if (conn != null) {
+			closeConnection(); // close old connection first
+		}
 		conn      = this.connect(dbName);
 	}
 
