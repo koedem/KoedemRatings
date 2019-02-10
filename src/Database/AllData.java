@@ -49,8 +49,9 @@ public class AllData {
 				if (ratingPoints.getInt("playerID") == 0) {
 					this.ratingPoints.add(new ArrayList<>());
 				}
-				this.ratingPoints.get(ratingPoints.getInt("ratingPeriod")).add(new RatingPoint(ratingPoints.getInt("playerID"), ratingPoints.getInt("ratingPeriod"),
-				        ratingPoints.getDouble("rating"), ratingPoints.getDouble("ratingDeviation"), ratingPoints.getDouble("volatility")));
+				this.ratingPoints.get(ratingPoints.getInt("ratingPeriod")).add(new RatingPoint(player.get(ratingPoints.getInt("playerID")),
+				                                                      ratingPoints.getInt("ratingPeriod"), ratingPoints.getDouble("rating"),
+				                                                      ratingPoints.getDouble("ratingDeviation"), ratingPoints.getDouble("volatility")));
 			}
 			if (this.ratingPoints.size() == 0) { // otherwise inserting a rating point later could lead to out of bounds exception
 				this.ratingPoints.add(new ArrayList<>());

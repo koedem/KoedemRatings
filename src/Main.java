@@ -31,15 +31,15 @@ public class Main {
 					addPlayer(parts);
 				} else if (command.startsWith("add game")) {
 					addGame(parts);
-				} else if (parts[0].equals("calculate")) {
+				} else if (command.equals("calculate")) {
 					evaluation();
 				} else if (parts[0].equals("load")) {
 					data.load(parts[1], parts[2], db);
 				} else if (parts[0].startsWith("store")) {
 					data.store(parts[1], parts[2], db);
-				} else if (parts[0].equals("print")) {
+				} else if (command.equals("print")) {
 					printPlayers();
-				} else if (parts[0].equals("print games")) {
+				} else if (command.equals("print games")) {
 					printGameDatabase();
 				} else if (command.startsWith("add tournament")) {
 					addTournament(parts);
@@ -71,7 +71,7 @@ public class Main {
 	
 	private void addPlayer(String[] parts) {
 		Player newPlayer = new Player(data.player.size(), parts[2], parts[3]);
-		RatingPoint ratingPoint = new RatingPoint(data.player.size(), currentRatingPeriod, Double.parseDouble(parts[4]), Double.parseDouble(parts[5]), Double.parseDouble(parts[6]));
+		RatingPoint ratingPoint = new RatingPoint(newPlayer, currentRatingPeriod, Double.parseDouble(parts[4]), Double.parseDouble(parts[5]), Double.parseDouble(parts[6]));
 		data.player.add(newPlayer);
 		data.ratingPoints.get(currentRatingPeriod).add(ratingPoint);
 		newPlayer.print(ratingPoint);

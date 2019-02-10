@@ -8,6 +8,7 @@ import Calculation.Calculator;
 
 public class RatingPoint {
 
+	private Player player;
 	private int    playerID;
 	private int    ratingPeriod;
 	private double rating;
@@ -20,12 +21,13 @@ public class RatingPoint {
 	
 	public ArrayList<Game> games = new ArrayList<Game>();
 	
-	public RatingPoint(int playerID, int ratingPeriod, double rating, double RD, double volatility) {
+	public RatingPoint(Player player, int ratingPeriod, double rating, double RD, double volatility) {
 		this.ratingPeriod = ratingPeriod;
 		this.rating = rating;
 		this.ratingDeviation = RD;
 		this.volatility = volatility;
-		this.playerID = playerID;
+		this.player = player;
+		this.playerID = player.getIdentifier();
 	}
 
 	/**
@@ -37,11 +39,15 @@ public class RatingPoint {
 		glickoTwoRatingDeviation = ratingDeviation / Calculator.CONVERSION_FACTOR_2_1;
 	}
 
-	public int getPlayerID() {
+	int getPlayerID() {
 		return playerID;
 	}
 
-	public double getRating() {
+	Player getPlayer() {
+		return player;
+	}
+
+	double getRating() {
 		return rating;
 	}
 
@@ -66,7 +72,7 @@ public class RatingPoint {
 	}
 	
 	public RatingPoint copyForNextRatingPeriod() {
-		return new RatingPoint(playerID, ratingPeriod + 1, rating, ratingDeviation, volatility);
+		return new RatingPoint(player, ratingPeriod + 1, rating, ratingDeviation, volatility);
 	}
 
 	public void setRatingChange(double ratingChange) {
@@ -98,9 +104,9 @@ public class RatingPoint {
 		}
 	}
 
-	// TODO implement
 	public void print() {
-		System.out.println("ID: " + playerID + ", Rating: " + String.format("%.2f",rating) + " ( " + String.format("%+.2f",ratingChange)
-		                   + " ), RD: " + String.format("%.2f",ratingDeviation) + " ( " + String.format("%+.2f",ratingDeviationChange) + " ).");
+		System.out.println("Name: " + player.getLastName() + ", " + player.getFirstName() + ", Rating: " + String.format("%.2f",rating)
+		                   + " ( " + String.format("%+.2f",ratingChange) + " ), RD: " + String.format("%.2f",ratingDeviation)
+		                   + " ( " + String.format("%+.2f",ratingDeviationChange) + " ).");
 	}
 }

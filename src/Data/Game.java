@@ -7,13 +7,18 @@ import java.sql.SQLException;
 public class Game {
 	
 	public RatingPoint winnerOne, winnerTwo, loserOne, loserTwo;
-	public int gameOneMoves, gameTwoMoves, secondsLeftWinnerOne, secondsLeftWinnerTwo, secondsLeftLoserOne, secondsLeftLoserTwo;
+	private int gameOneMoves, gameTwoMoves, secondsLeftWinnerOne, secondsLeftWinnerTwo, secondsLeftLoserOne, secondsLeftLoserTwo;
 	private Tournament tournament;
 	private int ratingPeriod;
 	private int        roundNumber;
 
 	public void print() {
-		// TODO implement
+		System.out.println("White: " + winnerOne.getPlayer().getLastName() + ", " + winnerOne.getPlayer().getFirstName() + " ( " + String.format("%.2f",winnerOne.getRating())
+		                   + " ), Seconds left: " + secondsLeftWinnerOne + "   1 - 0   " + loserOne.getPlayer().getLastName() + ", " + loserOne.getPlayer().getFirstName()
+		                   + " ( " + String.format("%.2f",loserOne.getRating()) + " ) , Seconds left: " + secondsLeftLoserOne);
+		System.out.println("Black: " + winnerTwo.getPlayer().getLastName() + ", " + winnerTwo.getPlayer().getFirstName() + " ( " + String.format("%.2f",winnerTwo.getRating())
+		                   + " ), Seconds left: " + secondsLeftWinnerTwo + "   1 - 0   " + loserTwo.getPlayer().getLastName() + ", " + loserTwo.getPlayer().getFirstName()
+		                   + " ( " + String.format("%.2f", loserTwo.getRating()) + " ) , Seconds left: " + secondsLeftLoserTwo + "\n");
 	}
 
 	public Game(int ratingPeriod, Tournament tournament, int roundNumber, RatingPoint winnerOne, RatingPoint winnerTwo,

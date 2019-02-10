@@ -41,4 +41,12 @@ public class Player {
 		                   + firstName + " Rating: " + String.format("%.2f",ratingPoint.getRating()) + " ( RD: "
 		                   + String.format("%.2f",ratingPoint.getRatingDeviation()) + " )");
 	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
 }

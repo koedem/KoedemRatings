@@ -1,6 +1,5 @@
 package Data;
 
-import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -10,7 +9,7 @@ import java.time.LocalDate;
 /**
  *
  */
-public class Tournament implements Serializable {
+public class Tournament {
 
 	private int tournamentID;
 	private int numberOfRounds = 0;
