@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+/**
+ * This class holds all data belonging to a game.
+ */
 public class Game {
 	
 	public RatingPoint winnerOne, winnerTwo, loserOne, loserTwo;
@@ -21,6 +24,22 @@ public class Game {
 		                   + " ( " + String.format("%.2f", loserTwo.getRating()) + " ) , Seconds left: " + secondsLeftLoserTwo + "\n");
 	}
 
+	/**
+	 *
+	 * @param ratingPeriod The rating period in which the game took place.
+	 * @param tournament The tournament to which this game belongs.
+	 * @param roundNumber The round in which the game was played.
+	 * @param winnerOne The player of the winning team who had the White pieces. The rating points correspond to the pre tournament ratings.
+	 * @param winnerTwo The player of the winning team who had the Black pieces.
+	 * @param loserOne The player of the losing team who had the Black pieces.
+	 * @param loserTwo The player of the losing team who had the White pieces.
+	 * @param movesOne Number of moves played in the game between winner one and loser one.
+	 * @param movesTwo Number of moves played in the game between winner two and loser two.
+	 * @param secondsLeftWinnerOne Seconds left on the clock for winner one.
+	 * @param secondsLeftWinnerTwo Seconds left on the clock for winner two.
+	 * @param secondsLeftLoserOne Seconds left on the clock for loser one.
+	 * @param secondsLeftLoserTwo Seconds left on the clock for loser two.
+	 */
 	public Game(int ratingPeriod, Tournament tournament, int roundNumber, RatingPoint winnerOne, RatingPoint winnerTwo,
 	            RatingPoint loserOne, RatingPoint loserTwo, int movesOne, int movesTwo, int secondsLeftWinnerOne,
 	            int secondsLeftWinnerTwo, int secondsLeftLoserOne, int secondsLeftLoserTwo) {

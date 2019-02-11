@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- *
+ * This class contains the player data like player-id and name. Ratings are stored seperately in rating point objects.
  */
 public class Player {
 
@@ -42,11 +42,11 @@ public class Player {
 		                   + String.format("%.2f",ratingPoint.getRatingDeviation()) + " )");
 	}
 
-	public String getFirstName() {
+	String getFirstName() {
 		return firstName;
 	}
 
-	public String getLastName() {
+	String getLastName() {
 		return lastName;
 	}
 }

@@ -16,7 +16,6 @@ public class Main {
 	private DBorganization db = new DBorganization();
 
 	private int maxTournamentID = 0;
-	private int currentTournamentID = 0;
 	private int currentRatingPeriod = 0;
 	
 	private final static Scanner input = new Scanner(System.in);
@@ -100,8 +99,8 @@ public class Main {
 	private void evaluation() {
 		data.ratingPoints.add(new ArrayList<RatingPoint>()); // i.e. create new rating period
 		for (RatingPoint rating : data.ratingPoints.get(currentRatingPeriod)) {
-			RatingPoint newRating = rating.copyForNextRatingPeriod();
 			rating.glickoIze();
+			RatingPoint newRating = rating.copyForNextRatingPeriod();
 			data.ratingPoints.get(currentRatingPeriod + 1).add(newRating); // put the copy in the next rating period
 		}
 		++currentRatingPeriod; // the old data stays as is, all calculations happen for the new period
@@ -128,7 +127,6 @@ public class Main {
 		data.tournaments.add(new Tournament(maxTournamentID, parts[2], parts[3], Integer.parseInt(parts[4]), LocalDate.parse(parts[5]),
 		                               LocalDate.parse(parts[6]), Integer.parseInt(parts[7])));
 		System.out.println("Tournament added with ID " + maxTournamentID);
-		currentTournamentID = maxTournamentID;
 		maxTournamentID++;
 	}
 }

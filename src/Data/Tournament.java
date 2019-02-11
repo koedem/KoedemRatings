@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 
 /**
- *
+ * This class is the programming representation of a played tournament. It is uniquely identified by it's ID.
  */
 public class Tournament {
 
@@ -39,6 +39,15 @@ public class Tournament {
 		}
 	}
 
+	/**
+	 * @param tournamentID Unique identifier of the tournament.
+	 * @param name The name of the tournament.
+	 * @param system The tournament system.
+	 * @param ratingPeriod In which rating period the tournament takes place. Usually the rating period which features the pre-tournament ratings.
+	 * @param startDate Date when the first round of the tournament started.
+	 * @param endDate Date when the last round of the tournament ended.
+	 * @param ratingBonus This bonus gets added to every participating players rating at the end of the tournament.
+	 */
 	public Tournament(int tournamentID, String name, String system, int ratingPeriod, LocalDate startDate, LocalDate endDate, int ratingBonus) {
 		this.tournamentID = tournamentID;
 		this.tournamentName = name;
@@ -49,13 +58,17 @@ public class Tournament {
 		this.ratingBonus = ratingBonus;
 	}
 
+	/**
+	 * Sets the number of rounds in the tournament to the parameter if it is greater than the old value.
+	 * @param numberOfRounds Positive integer.
+	 */
 	public void setRoundsIfGreater(int numberOfRounds) {
 		if (numberOfRounds > this.numberOfRounds) {
 			this.numberOfRounds = numberOfRounds;
 		}
 	}
 
-	public int getTournamentID() {
+	int getTournamentID() {
 		return tournamentID;
 	}
 }

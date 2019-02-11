@@ -70,7 +70,10 @@ public class RatingPoint {
 	public void setVolatility(double volatility) {
 		this.volatility = volatility;
 	}
-	
+
+	/**
+	 * @return a copy of the given rating point with ratingPeriod incremented by one.
+	 */
 	public RatingPoint copyForNextRatingPeriod() {
 		return new RatingPoint(player, ratingPeriod + 1, rating, ratingDeviation, volatility);
 	}
@@ -105,8 +108,8 @@ public class RatingPoint {
 	}
 
 	public void print() {
-		System.out.println("Name: " + player.getLastName() + ", " + player.getFirstName() + ", Rating: " + String.format("%.2f",rating)
-		                   + " ( " + String.format("%+.2f",ratingChange) + " ), RD: " + String.format("%.2f",ratingDeviation)
-		                   + " ( " + String.format("%+.2f",ratingDeviationChange) + " ).");
+		System.out.println("Name: " + player.getLastName() + ", " + player.getFirstName() + ", Rating: " + String.format("%.2f", rating)
+		                   + " ( " + String.format("%+.2f", ratingChange) + " ), RD: " + String.format("%.2f", ratingDeviation)
+		                   + " ( " + String.format("%+.2f", ratingDeviationChange) + " ), volalility: " + String.format("%.4f", volatility));
 	}
 }

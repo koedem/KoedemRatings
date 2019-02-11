@@ -12,18 +12,24 @@ public class Calculator {
 	private static double tau = 0.5;
 	
 	public static final double CONVERSION_FACTOR_2_1 = 173.7178;
-	
+
+	/**
+	 * Calculate the rating change of oldPoint according to the games of oldPoint and store the new rating in newPoint.
+	 * @param oldPoint The pre-rating period rating point containing all games played in the rating period. The values in here won't be changed.
+	 * @param newPoint The post-rating period rating point containing the new rating. The method assumes that newPoint is a (deep) copy of oldPoint
+	 *                    i.e. already contains the pre rating period rating etc.
+	 */
 	public static void calculate(RatingPoint oldPoint, RatingPoint newPoint) {
 		double phi = oldPoint.glickoTwoRatingDeviation;
 		double sigma = oldPoint.getVolatility();
 		if (oldPoint.games.size() != 0) {
 			double v     = 0.0;
-			double delta = 0.0;
+			double deltaOverV = 0.0;
 			for (int i = 0; i < oldPoint.games.size(); i++) {
 				Game    game   = oldPoint.games.get(i);
 				boolean winner = oldPoint.equals(game.winnerOne) || oldPoint.equals(game.winnerTwo);
-				double  my     = 0.0;
-				double  myI    = 0.0;
+				double  my;
+				double  myI;
 				if (winner) { // the team rating gets calculated as the sum of the players ratings
 					my = game.winnerOne.glickoTwoRating + game.winnerTwo.glickoTwoRating;
 					myI = game.loserOne.glickoTwoRating + game.loserTwo.glickoTwoRating;
@@ -40,46 +46,23 @@ public class Calculator {
 				v += G * G * e * (1.0 - e);
 
 				if (winner) {
-					delta += G * (1 - e);
+					deltaOverV += G * (1 - e);
 				} else {
-					delta += G * (0 - e);
+					deltaOverV += G * (0 - e);
 				}
 			}
 			v = 1.0 / v;
 
-			delta = v * delta;
+			double delta = deltaOverV * v;
 
 			double vol = volatility(sigma, delta, phi, v);
 
 			double phiStar = Math.sqrt(phi * phi + vol * vol);
 
 			double phiPrime = 1 / Math.sqrt(1 / (phiStar * phiStar) + 1 / v);
-			double myPrime  = 0;
-			for (int i = 0; i < oldPoint.games.size(); i++) {
-				Game    game   = oldPoint.games.get(i);
-				boolean winner = oldPoint.equals(game.winnerOne) || oldPoint.equals(game.winnerTwo);
-				double  my     = 0.0;
-				double  myI    = 0.0;
 
-				if (winner) {
-					my = game.winnerOne.glickoTwoRating + game.winnerTwo.glickoTwoRating;
-					myI = game.loserOne.glickoTwoRating + game.loserTwo.glickoTwoRating;
-				} else {
-					my = game.loserOne.glickoTwoRating + game.loserTwo.glickoTwoRating;
-					myI = game.winnerOne.glickoTwoRating + game.winnerTwo.glickoTwoRating;
-				}
-				double phiI = Math.sqrt(Math.pow(game.winnerOne.glickoTwoRatingDeviation, 2) + Math.pow(game.winnerTwo.glickoTwoRatingDeviation, 2) +
-				                        Math.pow(game.loserOne.glickoTwoRatingDeviation, 2) + Math.pow(game.loserTwo.glickoTwoRatingDeviation, 2) -
-				                        Math.pow(oldPoint.glickoTwoRatingDeviation, 2));
-
-				if (winner) {
-					myPrime += g(phiI) * (1 - E(my, myI, phiI));
-				} else {
-					myPrime += g(phiI) * (0 - E(my, myI, phiI));
-				}
-			}
-			double ratingChange = myPrime * phiPrime * phiPrime;
-			myPrime = oldPoint.glickoTwoRating + ratingChange; // TODO recheck this
+			double ratingChange = deltaOverV * phiPrime * phiPrime; // This is the second part of step 7, the sum is simply delta over v from earlier.
+			double myPrime = oldPoint.glickoTwoRating + ratingChange;
 			newPoint.setRatingChange(CONVERSION_FACTOR_2_1 * ratingChange);
 			newPoint.setRating(CONVERSION_FACTOR_2_1 * myPrime + 1500);
 			newPoint.setRatingDeviation(CONVERSION_FACTOR_2_1 * phiPrime);
@@ -89,7 +72,15 @@ public class Calculator {
 		}
 		newPoint.setRatingDeviationChange(newPoint.getRatingDeviation() - oldPoint.getRatingDeviation());
 	}
-	
+
+	/**
+	 * Function to calculate the new volatility as defined in <a href="http://www.glicko.net/glicko/glicko2.pdf">the paper on glicko2</a>, step 5.
+	 * @param sigma
+	 * @param delta
+	 * @param phi
+	 * @param v
+	 * @return
+	 */
 	private static double volatility(double sigma, double delta, double phi, double v) {
 		double A = Math.log(sigma * sigma);
 		double B;
@@ -123,13 +114,7 @@ public class Calculator {
 	}
 
 	/**
-	 *
-	 * @param x
-	 * @param sigma
-	 * @param delta
-	 * @param phi
-	 * @param v
-	 * @return
+	 * Function f as defined in <a href="http://www.glicko.net/glicko/glicko2.pdf">the paper on glicko2</a>, step 5.
 	 */
 	private static double f(double x, double sigma, double delta, double phi, double v) {
 		double a = Math.log(sigma * sigma);

@@ -4,7 +4,7 @@ import java.io.File;
 import java.sql.*;
 
 /**
- *
+ * This class is responsible for interactions with the sqlite database.
  */
 public class DBorganization {
 
@@ -12,7 +12,7 @@ public class DBorganization {
 	private String url = "jdbc:sqlite:H:/Schach/Ködem/DB/";
 
 	/**
-	 * Create a new database.
+	 * Create the database.
 	 */
 	private void createNewDatabase(String fileName) {
 
@@ -31,7 +31,7 @@ public class DBorganization {
 	}
 
 	/**
-	 * Set up the needed tables.
+	 * Set up the required tables.
 	 *
 	 */
 	private void setupTables(String fileName) {
@@ -133,7 +133,7 @@ public class DBorganization {
 		return conn;
 	}
 
-	public void setup(String path, String dbName) {
+	void setup(String path, String dbName) {
 		url = "jdbc:sqlite:".concat(path);
 		if (!(url.endsWith(File.separator))) {
 			url = url.concat(File.separator);
@@ -146,7 +146,7 @@ public class DBorganization {
 		conn      = this.connect(dbName);
 	}
 
-	public Connection getConn() {
+	Connection getConn() {
 		return conn;
 	}
 

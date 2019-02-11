@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- *
+ * This is a container for all objects that get stored in the database.
  */
 public class AllData {
 
@@ -44,6 +44,7 @@ public class AllData {
 			ResultSet ratingPoints = rpstmt.executeQuery();
 
 			while (ratingPoints.next()) {
+
 				// this is a bit of a hack, the player with ID 0 exists in every rating period and through the ordering will always appear first
 				// i.e. we need a new rating period here
 				if (ratingPoints.getInt("playerID") == 0) {
